@@ -1,17 +1,18 @@
-import 'package:cart_demo/feature/product/product_cubit.dart';
-import 'package:cart_demo/feature/product/view/product_item.dart';
+import 'package:cart_demo/feature/cart/view/cart_item_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../home/tab_state.dart';
-class ProductListingView extends StatefulWidget {
-  const ProductListingView({super.key});
+import '../cart_cubit.dart';
+
+class CartListingView extends StatefulWidget {
+  const CartListingView({super.key});
 
   @override
-  ProductListingViewState createState() => ProductListingViewState();
+  CartListingViewState createState() => CartListingViewState();
 }
 
-class ProductListingViewState extends State<ProductListingView> {
+class CartListingViewState extends State<CartListingView> {
   final _scrollController = ScrollController();
 
   @override
@@ -29,28 +30,29 @@ class ProductListingViewState extends State<ProductListingView> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent) {
-      context.read<ProductTabViewCubit>().loadMore();
+      context.read<CartTabViewCubit>().loadMore();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductTabViewCubit, TabViewState>(
-      builder: (context, state) {
+    return BlocBuilder<CartTabViewCubit, TabViewState>(
+      builder: (context, state)
+      {
         if (state.isLoading && state.data.isEmpty) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         } else if (state.hasError) {
           return const Center(
-            child: Text('Error fetching products. Please try again.'),
+            child: Text('Error fetching cart. Please try again.'),
           );
-        } else {
+        } else{
           return ListView.builder(
             controller: _scrollController,
             itemCount: state.data.length,
             itemBuilder: (context, index) {
-              return ProductItem(product: state.data[index]);
+              return CartItem(cart: state.data[index]);
             },
           );
         }
